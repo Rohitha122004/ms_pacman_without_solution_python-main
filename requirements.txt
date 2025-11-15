@@ -1,0 +1,9 @@
+# Python dependencies for PacMan RL Project
+
+# Image processing for game visualization
+Pillow>=9.0.0
+
+# Testing framework
+pytest>=7.0.0
+pytest-timeout>=2.1.0
+pytest-xdist>=3.0.0  # For parallel test execution

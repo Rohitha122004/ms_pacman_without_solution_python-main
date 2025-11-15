@@ -1,0 +1,35 @@
+/.vscode
+/.cache
+.idea/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Ignore Python bytecode & build artifacts
+*.py[cod]
+__pycache__/
+*.pyo
+*.pyd
+*.so
+.eggs/
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage/
+htmlcov/
+
+# Project-specific generated files
+/temp.ps
+myData/
+New folder/*
+
+# Ignore macOS files (covers every directory)
+.DS_Store
+**/.DS_Store

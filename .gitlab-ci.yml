@@ -1,0 +1,41 @@
+stages:
+  - test
+
+variables:
+  PYTHON_HOME: "$CI_PROJECT_DIR/.python39"
+  PYTHON_BIN: "$CI_PROJECT_DIR/.python39/bin/python3.9"
+  PYTHON_VENV: "$CI_PROJECT_DIR/.venv"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+test-python:
+  stage: test
+  script:
+    - >
+      if [ -x "$PYTHON_BIN" ]; then
+        echo "Using cached Python at $PYTHON_BIN";
+      else
+        echo "Bootstrapping portable Python 3.9 (PyPy build)";
+        curl -sSL https://downloads.python.org/pypy/pypy3.9-v7.3.16-linux64.tar.bz2 -o pypy.tar.bz2 &&
+        tar -xjf pypy.tar.bz2 &&
+        rm -f pypy.tar.bz2 &&
+        rm -rf "$PYTHON_HOME" &&
+        mv pypy3.9-v7.3.16-linux64 "$PYTHON_HOME" &&
+        ln -sf "$PYTHON_HOME/bin/pypy3" "$PYTHON_HOME/bin/python3.9";
+      fi
+    - >
+      if [ -d "$PYTHON_VENV" ]; then
+        echo "Using existing virtual environment";
+      else
+        "$PYTHON_BIN" -m venv "$PYTHON_VENV" &&
+        "$PYTHON_VENV/bin/pip" install "pip<22" "setuptools<60" &&
+        "$PYTHON_VENV/bin/pip" install pytest==6.2.5 pytest-timeout==2.1.0 pytest-xdist==2.5.0;
+      fi
+    - . "$PYTHON_VENV/bin/activate"
+    - export PYTHONPATH="$CI_PROJECT_DIR/src"
+    - pytest src/test -s --maxfail=1
+  cache:
+    policy: pull-push
+    key: python39
+    paths:
+      - .python39
+      - .venv
